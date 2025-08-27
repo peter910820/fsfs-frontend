@@ -1,8 +1,12 @@
-export interface UserType {
+export interface UserInfo {
+  id: number;
   username: string;
   email: string;
-  avatar: string;
+  exp: number;
   management: boolean;
-  createdAt: Date;
-  createName: string;
+  created_at: Date;
+  updated_at: Date;
+  update_name: string;
+  avatar: string;
+  dataVersion: number;
 }

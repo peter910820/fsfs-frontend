@@ -45,13 +45,13 @@ const form = ref({
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post<LoginResponseType>("/api/login", form.value);
-    sessionStorage.setItem("msg", response.data.message); // ??
+    const response = await axios.post<LoginResponseType>("/api/blog/login", form.value);
+    sessionStorage.setItem("msg", response.data.infoMsg); // ??
     userStore.set(response.data.data);
     router.push("/");
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.message}`);
+      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.errMsg}`);
       router.push("/error");
     } else {
       sessionStorage.setItem("msg", String(error));

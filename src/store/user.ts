@@ -3,11 +3,11 @@ localStorage.clear();
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import type { UserType } from "@/types/user";
+import type { UserInfo } from "@/types/user";
 
 export const useUserStore = defineStore("user", () => {
-  const user = ref<UserType>();
-  const set = (data: UserType) => {
+  const user = ref<UserInfo>();
+  const set = (data: UserInfo) => {
     user.value = data;
   };
 

@@ -16,9 +16,7 @@
     </div>
     <div class="col l8 m12 s12 file-block input-field">
       <div class="row">
-        <div class="col s12 file-block-title" v-if="fileData.length > 0">
-          {{ (fileData[0] as string).split("/").slice(-2, -1)[0] }}📃資料夾內容
-        </div>
+        <div class="col s12 file-block-title">📃資料夾內容</div>
         <div
           class="col s12 wow animate__fadeInRightBig floatup-div file ellipsis"
           @click="goToUrl(item)"
@@ -26,7 +24,7 @@
           :key="index"
           :value="item"
         >
-          <a :href="item">
+          <a>
             <div v-if="(item as string).endsWith('.png') || (item as string).endsWith('.jpg')">
               🖼️{{ item as string }}
             </div>
@@ -52,14 +50,14 @@ export default defineComponent({
     const { directory } = storeToRefs(directoryStore);
     const buttonValue = ref(directory.value);
     const router = useRouter();
-    const fileData = ref([]);
+    const fileData = ref(null);
 
     const expandDetails = async (folder: string) => {
-      const apiUrl = `/api/files?folder=${folder}`;
+      const apiUrl = `http://127.0.0.1:3052/api/files?dir=${folder}`;
       try {
         const response = await axios.get(apiUrl);
         if (response && response.status === 200) {
-          fileData.value = response.data.data;
+          fileData.value = response.data;
         } else if (response) {
           router.push("/error");
         } else {
@@ -72,13 +70,13 @@ export default defineComponent({
     };
 
     const goToUrl = async (url: string) => {
-      window.location.href = url;
+      window.location.href = "http://127.0.0.1:3052/" + url;
     };
 
     onMounted(async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const getFile = async (): Promise<AxiosResponse | undefined> => {
-        const apiUrl = "/api/files";
+        const apiUrl = "http://127.0.0.1:3052/api/files";
         try {
           const response = await axios.get(apiUrl);
           return response;
@@ -89,7 +87,7 @@ export default defineComponent({
       };
       const response = await getFile();
       if (response && response.status === 200) {
-        fileData.value = response.data.data;
+        fileData.value = response.data;
       } else if (response) {
         router.push("/error");
       } else {

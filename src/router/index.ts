@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 import { getDataEntryPoint } from "@/router/guard";
 
@@ -10,13 +10,13 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: () => import("@/components/MainPage.vue"),
-    beforeEnter: (_to, _from, next) => {
-      if (Cookies.get("session_id") !== undefined) {
-        next();
-      } else {
-        next("/login");
-      }
-    },
+    // beforeEnter: (_to, _from, next) => {
+    //   if (Cookies.get("session_id") !== undefined) {
+    //     next();
+    //   } else {
+    //     next("/login");
+    //   }
+    // },
   },
   {
     path: "/login",

@@ -16,7 +16,7 @@
       <select v-model="updateDirectory">
         <option class="validate" value="" disabled selected>選擇資料夾</option>
         <option v-for="(item, index) in directory" :key="index" :value="item">
-          {{ (item as string).split("/")[1] }}
+          {{ item }}
         </option>
       </select>
     </div>
@@ -24,7 +24,7 @@
       <select v-model="updateDirectory" class="browser-default">
         <option class="validate" value="" disabled selected>選擇資料夾</option>
         <option v-for="(item, index) in directory" :key="index" :value="item">
-          {{ (item as string).split("/")[1] }}
+          {{ item }}
         </option>
       </select>
     </div>
@@ -54,7 +54,7 @@ export default defineComponent({
     onMounted(async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const getDirectory = async (): Promise<AxiosResponse | undefined> => {
-        const apiUrl = "/api/directory";
+        const apiUrl = "http://127.0.0.1:3052/api/directories";
         try {
           const response = await axios.get(apiUrl);
           return response;
@@ -65,7 +65,7 @@ export default defineComponent({
       };
       const response = await getDirectory();
       if (response && response.status === 200) {
-        directory.value = response.data.data.slice(1);
+        directory.value = response.data;
       } else if (response) {
         router.push("/error");
       } else {
@@ -96,7 +96,7 @@ export default defineComponent({
       formData.append("directory", updateDirectory.value as string);
 
       try {
-        await axios.post("/api/upload", formData, {
+        await axios.post("http://127.0.0.1:3052/api/upload/" + updateDirectory.value, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         alert("檔案上傳成功！");
