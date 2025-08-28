@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { initMaterialSidenav } from "@/composables/useMaterial";
+
+onMounted(() => {
+  initMaterialSidenav();
+});
+</script>
+
 <template>
   <nav>
     <div class="nav-wrapper">
@@ -28,20 +37,8 @@
     <li>
       <router-link to="/folder">檔案夾</router-link>
     </li>
-    <li>
-      <router-link to="/markdown-writer">文字編輯器</router-link>
-    </li>
   </ul>
 </template>
-
-<script setup lang="ts">
-import { onMounted } from "vue";
-import { initMaterialSidenav } from "@/composables/useMaterial";
-
-onMounted(() => {
-  initMaterialSidenav();
-});
-</script>
 
 <style scoped>
 .nav-wrapper {

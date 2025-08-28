@@ -1,3 +1,61 @@
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import type { AxiosResponse } from "axios";
+import { useDirectoryStore } from "@/store/file";
+import { storeToRefs } from "pinia";
+
+const directoryStore = useDirectoryStore();
+const { directory } = storeToRefs(directoryStore);
+const buttonValue = ref(directory.value);
+const router = useRouter();
+const fileData = ref(null);
+
+const expandDetails = async (folder: string) => {
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/files?dir=${folder}`;
+  try {
+    const response = await axios.get(apiUrl);
+    if (response && response.status === 200) {
+      fileData.value = response.data;
+    } else if (response) {
+      router.push("/error");
+    } else {
+      router.push("/error");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    router.push("/error");
+  }
+};
+
+const goToUrl = async (url: string) => {
+  window.location.href = import.meta.env.VITE_API_URL + url;
+};
+
+onMounted(async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getFile = async (): Promise<AxiosResponse | undefined> => {
+    const apiUrl = import.meta.env.VITE_API_URL + "/api/files";
+    try {
+      const response = await axios.get(apiUrl);
+      return response;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      return error.response;
+    }
+  };
+  const response = await getFile();
+  if (response && response.status === 200) {
+    fileData.value = response.data;
+  } else if (response) {
+    router.push("/error");
+  } else {
+    router.push("/error");
+  }
+});
+</script>
+
 <template>
   <div class="row main-block">
     <h1 class="center">伺服器資源</h1>
@@ -35,70 +93,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
-import type { AxiosResponse } from "axios";
-import { useDirectoryStore } from "@/store/file";
-import { storeToRefs } from "pinia";
-
-export default defineComponent({
-  setup() {
-    const directoryStore = useDirectoryStore();
-    const { directory } = storeToRefs(directoryStore);
-    const buttonValue = ref(directory.value);
-    const router = useRouter();
-    const fileData = ref(null);
-
-    const expandDetails = async (folder: string) => {
-      const apiUrl = `http://127.0.0.1:3052/api/files?dir=${folder}`;
-      try {
-        const response = await axios.get(apiUrl);
-        if (response && response.status === 200) {
-          fileData.value = response.data;
-        } else if (response) {
-          router.push("/error");
-        } else {
-          router.push("/error");
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        router.push("/error");
-      }
-    };
-
-    const goToUrl = async (url: string) => {
-      window.location.href = "http://127.0.0.1:3052/" + url;
-    };
-
-    onMounted(async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const getFile = async (): Promise<AxiosResponse | undefined> => {
-        const apiUrl = "http://127.0.0.1:3052/api/files";
-        try {
-          const response = await axios.get(apiUrl);
-          return response;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-          return error.response;
-        }
-      };
-      const response = await getFile();
-      if (response && response.status === 200) {
-        fileData.value = response.data;
-      } else if (response) {
-        router.push("/error");
-      } else {
-        router.push("/error");
-      }
-    });
-
-    return { fileData, buttonValue, expandDetails, goToUrl };
-  },
-});
-</script>
 
 <style scoped>
 a {

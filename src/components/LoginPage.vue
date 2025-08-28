@@ -1,3 +1,41 @@
+<script setup lang="ts">
+import axios from "axios";
+import { ref } from "vue";
+import { useUserStore } from "@/store/user";
+// import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+
+import type { LoginResponseType } from "@/types/response";
+
+const router = useRouter();
+const userStore = useUserStore();
+// const { user } = storeToRefs(userStore);
+const form = ref({
+  username: "",
+  password: "",
+});
+
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post<LoginResponseType>(
+      import.meta.env.VITE_MAIN_API_URL + "/api/blog/login",
+      form.value,
+    );
+    sessionStorage.setItem("msg", response.data.infoMsg); // ??
+    userStore.set(response.data.data);
+    router.push("/");
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.errMsg}`);
+      router.push("/error");
+    } else {
+      sessionStorage.setItem("msg", String(error));
+      router.push("/error");
+    }
+  }
+};
+</script>
+
 <template>
   <div class="row main-block">
     <h1>登入</h1>
@@ -25,41 +63,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import axios from "axios";
-import { ref } from "vue";
-import { useUserStore } from "@/store/user";
-// import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-
-import type { LoginResponseType } from "@/types/response";
-
-const router = useRouter();
-const userStore = useUserStore();
-// const { user } = storeToRefs(userStore);
-const form = ref({
-  username: "",
-  password: "",
-});
-
-const handleSubmit = async () => {
-  try {
-    const response = await axios.post<LoginResponseType>("/api/blog/login", form.value);
-    sessionStorage.setItem("msg", response.data.infoMsg); // ??
-    userStore.set(response.data.data);
-    router.push("/");
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.errMsg}`);
-      router.push("/error");
-    } else {
-      sessionStorage.setItem("msg", String(error));
-      router.push("/error");
-    }
-  }
-};
-</script>
 
 <style scoped>
 .col {
