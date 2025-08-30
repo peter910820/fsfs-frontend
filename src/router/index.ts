@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 
+import axios from "axios";
+
 import Cookies from "js-cookie";
+
+import type { ResponseType } from "@/types/response";
+
+import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
     component: () => import("@/components/MainPage.vue"),
-    beforeEnter: (_to, _from, next) => {
-      if (Cookies.get("sid") !== undefined) {
-        next();
-      } else {
-        next("/login");
-      }
-    },
+    beforeEnter: async (to, from, next) => middlware(to, from, next),
   },
   {
     path: "/login",
@@ -39,6 +39,26 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: "empty" },
   },
 ];
+
+const middlware = async (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+  if (Cookies.get("sid") !== undefined) {
+    try {
+      const response = await axios.post<ResponseType<null>>(import.meta.env.VITE_API_URL + "/api/auth");
+      sessionStorage.setItem("msg", response.data.msg); // ?
+      next();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
+        router.push("/error");
+      } else {
+        sessionStorage.setItem("msg", String(error));
+        router.push("/error");
+      }
+    }
+  } else {
+    next("/login");
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
