@@ -5,8 +5,8 @@ import type { AxiosResponse } from "axios";
 export const getDirectory = async (): Promise<AxiosResponse> => {
   try {
     let url = "/api/directories";
-    if (import.meta.env.VITE_API_URL) {
-      url = import.meta.env.VITE_API_URL + "/api/directories";
+    if (import.meta.env.VITE_API_TEST_URL) {
+      url = import.meta.env.VITE_API_TEST_URL + "/api/directories";
     }
     const response = await axios.get(url);
     return response;
@@ -18,8 +18,8 @@ export const getDirectory = async (): Promise<AxiosResponse> => {
 
 export const getFile = async (): Promise<AxiosResponse> => {
   let url = "/api/files";
-  if (import.meta.env.VITE_API_URL) {
-    url = import.meta.env.VITE_API_URL + "/api/files";
+  if (import.meta.env.VITE_API_TEST_URL) {
+    url = import.meta.env.VITE_API_TEST_URL + "/api/files";
   }
   try {
     const response = await axios.get(url);

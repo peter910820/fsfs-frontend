@@ -3,8 +3,6 @@ import type { RouteRecordRaw } from "vue-router";
 
 import axios from "axios";
 
-import Cookies from "js-cookie";
-
 import type { ResponseType } from "@/types/response";
 
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
@@ -41,29 +39,25 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const middlware = async (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
-  if (Cookies.get("sid") !== undefined) {
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/auth` : "/api/auth";
-      const response = await axios.post<ResponseType<null>>(
-        apiUrl,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
-      sessionStorage.setItem("msg", response.data.msg); // ?
-      next();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
-        router.push("/error");
-      } else {
-        sessionStorage.setItem("msg", String(error));
-        router.push("/error");
-      }
+  try {
+    const apiUrl = import.meta.env.VITE_API_TEST_URL ? `${import.meta.env.VITE_API_TEST_URL}/api/auth` : "/api/auth";
+    const response = await axios.post<ResponseType<null>>(
+      apiUrl,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+    sessionStorage.setItem("msg", response.data.msg); // ?
+    next();
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
+      router.push("/login");
+    } else {
+      sessionStorage.setItem("msg", String(error));
+      router.push("/error");
     }
-  } else {
-    next("/login");
   }
 };
 

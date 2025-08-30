@@ -17,7 +17,7 @@ const form = ref({
 
 const handleSubmit = async () => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/login` : "/api/login";
+    const apiUrl = import.meta.env.VITE_API_TEST_URL ? `${import.meta.env.VITE_API_TEST_URL}/api/login` : "/api/login";
     const response = await axios.post<ResponseType<string>>(apiUrl, form.value, {
       withCredentials: true,
     });

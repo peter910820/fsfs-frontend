@@ -43,7 +43,7 @@ const upload = async () => {
   formData.append("directory", updateDirectory.value as string);
 
   try {
-    await axios.post(import.meta.env.VITE_API_URL + "/api/upload/" + updateDirectory.value, formData, {
+    await axios.post(import.meta.env.VITE_API_TEST_URL + "/api/upload/" + updateDirectory.value, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     alert("檔案上傳成功！");
