@@ -4,7 +4,11 @@ import type { AxiosResponse } from "axios";
 
 export const getDirectory = async (): Promise<AxiosResponse> => {
   try {
-    const response = await axios.get(import.meta.env.VITE_API_URL + "/api/directories");
+    let url = "/api/directories";
+    if (import.meta.env.VITE_API_URL) {
+      url = import.meta.env.VITE_API_URL + "/api/directories";
+    }
+    const response = await axios.get(url);
     return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -13,9 +17,12 @@ export const getDirectory = async (): Promise<AxiosResponse> => {
 };
 
 export const getFile = async (): Promise<AxiosResponse> => {
-  const apiUrl = import.meta.env.VITE_API_URL + "/api/files";
+  let url = "/api/files";
+  if (import.meta.env.VITE_API_URL) {
+    url = import.meta.env.VITE_API_URL + "/api/files";
+  }
   try {
-    const response = await axios.get(apiUrl);
+    const response = await axios.get(url);
     return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

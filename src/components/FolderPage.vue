@@ -12,7 +12,9 @@ const dirData = ref<string[]>([]);
 const fileData = ref<string[]>([]);
 
 const expandDetails = async (folder: string) => {
-  const apiUrl = `${import.meta.env.VITE_API_URL}/api/files?dir=${folder}`;
+  const apiUrl = import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api/files?dir=${folder}`
+    : `/api/files?dir=${folder}`;
   try {
     const response = await axios.get<ResponseType<string[]>>(apiUrl);
     if (response && response.status === 200) {

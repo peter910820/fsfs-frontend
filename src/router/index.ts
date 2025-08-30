@@ -43,7 +43,14 @@ const routes: Array<RouteRecordRaw> = [
 const middlware = async (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
   if (Cookies.get("sid") !== undefined) {
     try {
-      const response = await axios.post<ResponseType<null>>(import.meta.env.VITE_API_URL + "/api/auth");
+      const apiUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/auth` : "/api/auth";
+      const response = await axios.post<ResponseType<null>>(
+        apiUrl,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
       sessionStorage.setItem("msg", response.data.msg); // ?
       next();
     } catch (error) {

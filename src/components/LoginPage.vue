@@ -17,7 +17,10 @@ const form = ref({
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post<ResponseType<string>>(import.meta.env.VITE_API_URL + "/api/login", form.value);
+    const apiUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/login` : "/api/login";
+    const response = await axios.post<ResponseType<string>>(apiUrl, form.value, {
+      withCredentials: true,
+    });
     sessionStorage.setItem("msg", response.data.msg); // ?
     // userStore.set(response.data.data);
     router.push("/");
