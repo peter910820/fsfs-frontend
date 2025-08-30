@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref } from "vue";
-import { useUserStore } from "@/store/user";
+// import { useUserStore } from "@/store/user";
 // import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 
-import type { LoginResponseType } from "@/types/response";
+import type { ResponseType } from "@/types/response";
 
 const router = useRouter();
-const userStore = useUserStore();
+// const userStore = useUserStore();
 // const { user } = storeToRefs(userStore);
 const form = ref({
   username: "",
@@ -17,16 +17,13 @@ const form = ref({
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post<LoginResponseType>(
-      import.meta.env.VITE_MAIN_API_URL + "/api/blog/login",
-      form.value,
-    );
-    sessionStorage.setItem("msg", response.data.infoMsg); // ??
-    userStore.set(response.data.data);
+    const response = await axios.post<ResponseType<string>>(import.meta.env.VITE_API_URL + "/api/login", form.value);
+    sessionStorage.setItem("msg", response.data.msg); // ?
+    // userStore.set(response.data.data);
     router.push("/");
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.errMsg}`);
+      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
       router.push("/error");
     } else {
       sessionStorage.setItem("msg", String(error));

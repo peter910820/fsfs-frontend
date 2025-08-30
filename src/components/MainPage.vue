@@ -3,7 +3,8 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { initMaterialFormSelect } from "@/composables/useMaterial";
 import axios from "axios";
-import type { AxiosResponse } from "axios";
+
+import { getDirectory } from "@/utils/apiHandler";
 
 const router = useRouter();
 const directory = ref(null);
@@ -11,20 +12,9 @@ let updateDirectory = ref<string | null>(null);
 const file = ref<File | null>(null);
 
 onMounted(async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getDirectory = async (): Promise<AxiosResponse | undefined> => {
-    const apiUrl = import.meta.env.VITE_API_URL + "/api/directories";
-    try {
-      const response = await axios.get(apiUrl);
-      return response;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      return error.response;
-    }
-  };
   const response = await getDirectory();
   if (response && response.status === 200) {
-    directory.value = response.data;
+    directory.value = response.data.data;
   } else {
     router.push("/error");
   }

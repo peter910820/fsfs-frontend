@@ -2,22 +2,21 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import type { AxiosResponse } from "axios";
-import { useDirectoryStore } from "@/store/file";
-import { storeToRefs } from "pinia";
+import type { ResponseType } from "@/types/response";
 
-const directoryStore = useDirectoryStore();
-const { directory } = storeToRefs(directoryStore);
-const buttonValue = ref(directory.value);
+import { getDirectory, getFile } from "@/utils/apiHandler";
+
 const router = useRouter();
-const fileData = ref(null);
+
+const dirData = ref<string[]>([]);
+const fileData = ref<string[]>([]);
 
 const expandDetails = async (folder: string) => {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/files?dir=${folder}`;
   try {
-    const response = await axios.get(apiUrl);
+    const response = await axios.get<ResponseType<string[]>>(apiUrl);
     if (response && response.status === 200) {
-      fileData.value = response.data;
+      fileData.value = response.data.data;
     } else if (response) {
       router.push("/error");
     } else {
@@ -30,24 +29,21 @@ const expandDetails = async (folder: string) => {
 };
 
 const goToUrl = async (url: string) => {
-  window.location.href = import.meta.env.VITE_API_URL + url;
+  window.location.href = import.meta.env.VITE_API_URL + "/" + url;
 };
 
 onMounted(async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getFile = async (): Promise<AxiosResponse | undefined> => {
-    const apiUrl = import.meta.env.VITE_API_URL + "/api/files";
-    try {
-      const response = await axios.get(apiUrl);
-      return response;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      return error.response;
-    }
-  };
-  const response = await getFile();
+  let response = await getDirectory();
   if (response && response.status === 200) {
-    fileData.value = response.data;
+    dirData.value = response.data.data;
+  } else if (response) {
+    router.push("/error");
+  } else {
+    router.push("/error");
+  }
+  response = await getFile();
+  if (response && response.status === 200) {
+    fileData.value = response.data.data;
   } else if (response) {
     router.push("/error");
   } else {
@@ -62,13 +58,8 @@ onMounted(async () => {
     <div class="col l4 m12 s12 file-block input-field">
       <div class="row">
         <div class="col s12 folder-block-title">📁選擇資料夾</div>
-        <div class="col s12 folder" v-for="(item, index) in buttonValue" :key="index" :value="item">
-          <input
-            type="button"
-            class="button-folder"
-            @click="expandDetails(item.split('/')[1])"
-            :value="item.split('/')[1]"
-          />
+        <div class="col s12 folder" v-for="(item, index) in dirData" :key="index" :value="item">
+          <input type="button" class="button-folder" @click="expandDetails(item)" :value="item" />
         </div>
       </div>
     </div>

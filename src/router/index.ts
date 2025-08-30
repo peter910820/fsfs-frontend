@@ -1,22 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 
-// import Cookies from "js-cookie";
-
-import { getDataEntryPoint } from "@/router/guard";
+import Cookies from "js-cookie";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
     component: () => import("@/components/MainPage.vue"),
-    // beforeEnter: (_to, _from, next) => {
-    //   if (Cookies.get("session_id") !== undefined) {
-    //     next();
-    //   } else {
-    //     next("/login");
-    //   }
-    // },
+    beforeEnter: (_to, _from, next) => {
+      if (Cookies.get("sid") !== undefined) {
+        next();
+      } else {
+        next("/login");
+      }
+    },
   },
   {
     path: "/login",
@@ -27,7 +25,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/folder",
     name: "folder",
     component: () => import("@/components/FolderPage.vue"),
-    beforeEnter: async (to, from, next) => getDataEntryPoint(to, from, next),
   },
   {
     path: "/error",
