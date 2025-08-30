@@ -35,7 +35,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/:pathMatch(.*)*",
     name: "notFound",
-    component: () => import("@/components/ErrorPage.vue"),
+    component: () => import("@/components/NotFoundPage.vue"),
+    meta: { layout: "empty" },
   },
 ];
 

@@ -1,19 +1,28 @@
 <template>
-  <component :is="layoutComponent" />
+  <div class="main-style">
+    <div class="sticky-navbar">
+      <NavBar />
+    </div>
+    <div class="row">
+      <div class="col m12 m12 s12">
+        <router-view />
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+<script lang="ts">
+import { defineComponent } from "vue";
 
-import DefaultLayout from "@/layouts/DefaultLayout.vue";
-import EmptyLayout from "@/layouts/EmptyLayout.vue";
+import NavBar from "@/components/NavBar.vue";
 
-const route = useRoute();
-
-const layoutComponent = computed(() => {
-  if (route.meta.layout === "empty") return EmptyLayout;
-  return DefaultLayout;
+export default defineComponent({
+  components: {
+    NavBar,
+  },
+  setup() {
+    return;
+  },
 });
 </script>
 
