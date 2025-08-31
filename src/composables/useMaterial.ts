@@ -39,3 +39,10 @@ export function initMaterialSidenav() {
     }
   });
 }
+
+export function initMaterialModal() {
+  nextTick(() => {
+    const elems = document.querySelectorAll(".modal");
+    M.Modal.init(elems, { startingTop: "30%", endingTop: "30%" });
+  });
+}

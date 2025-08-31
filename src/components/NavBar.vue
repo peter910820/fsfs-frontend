@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { initMaterialSidenav } from "@/composables/useMaterial";
+import { initMaterialSidenav, initMaterialModal } from "@/composables/useMaterial";
+import { useLoginStore } from "@/store/login";
+
+const loginStatus = useLoginStore();
 
 onMounted(() => {
   initMaterialSidenav();
+  initMaterialModal();
 });
 </script>
 
@@ -24,6 +28,12 @@ onMounted(() => {
           <router-link to="/folder">
             檔案夾
             <i class="material-icons left">folder_open</i>
+          </router-link>
+        </li>
+        <li v-if="!loginStatus.status">
+          <router-link to="" class="modal-trigger" data-target="modal1">
+            登入
+            <i class="material-icons left">key</i>
           </router-link>
         </li>
       </ul>

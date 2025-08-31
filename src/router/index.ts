@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 
+import { useLoginStore } from "@/store/login";
+
 import axios from "axios";
 
 import type { ResponseType } from "@/types/response";
@@ -13,11 +15,6 @@ const routes: Array<RouteRecordRaw> = [
     name: "home",
     component: () => import("@/components/MainPage.vue"),
     beforeEnter: async (to, from, next) => middlware(to, from, next),
-  },
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("@/components/LoginPage.vue"),
   },
   {
     path: "/folder",
@@ -39,6 +36,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const middlware = async (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+  const loginStore = useLoginStore();
   try {
     const apiUrl = import.meta.env.VITE_API_TEST_URL ? `${import.meta.env.VITE_API_TEST_URL}/api/auth` : "/api/auth";
     const response = await axios.post<ResponseType<null>>(
@@ -49,11 +47,14 @@ const middlware = async (_to: RouteLocationNormalized, _from: RouteLocationNorma
       },
     );
     sessionStorage.setItem("msg", response.data.msg); // ?
+    loginStore.set(true);
     next();
   } catch (error) {
     if (axios.isAxiosError(error)) {
       sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
-      router.push("/login");
+      loginStore.set(false);
+      M.toast({ html: "使用者尚未登入！" });
+      router.push("/folder");
     } else {
       sessionStorage.setItem("msg", String(error));
       router.push("/error");

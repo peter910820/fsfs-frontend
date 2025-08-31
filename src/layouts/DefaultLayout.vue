@@ -6,24 +6,70 @@
     <div class="row">
       <div class="col m12 m12 s12">
         <router-view />
+        <div id="modal1" class="modal">
+          <div class="modal-content">
+            <h1>登入</h1>
+            <form>
+              <div class="input-field">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="icon_prefix" v-model="form.username" type="text" class="validate" required />
+                <span class="helper-text" data-error="此欄位不能為空" data-success=""></span>
+                <label for="icon_prefix">username</label>
+              </div>
+              <div class="input-field">
+                <i class="material-icons prefix">lock</i>
+                <input id="icon_lock" v-model="form.password" type="password" class="validate" required />
+                <span class="helper-text" data-error="此欄位不能為空" data-success=""></span>
+                <label for="icon_lock">password</label>
+              </div>
+              <div>
+                <button @click="handleSubmit" class="modal-close btn waves-effect waves-light" type="button">
+                  點我登入
+                  <i class="material-icons right">send</i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
+<script setup lang="ts">
 import NavBar from "@/components/NavBar.vue";
 
-export default defineComponent({
-  components: {
-    NavBar,
-  },
-  setup() {
-    return;
-  },
+import axios from "axios";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+import type { ResponseType } from "@/types/response";
+
+const router = useRouter();
+const form = ref({
+  username: "",
+  password: "",
 });
+
+const handleSubmit = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_TEST_URL ? `${import.meta.env.VITE_API_TEST_URL}/api/login` : "/api/login";
+    const response = await axios.post<ResponseType<string>>(apiUrl, form.value, {
+      withCredentials: true,
+    });
+    sessionStorage.setItem("msg", response.data.msg); // ?
+    // userStore.set(response.data.data);
+    router.push("/");
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      sessionStorage.setItem("msg", `${error.response?.status}: ${error.response?.data.msg}`);
+      router.push("/error");
+    } else {
+      sessionStorage.setItem("msg", String(error));
+      router.push("/error");
+    }
+  }
+};
 </script>
 
 <style>
@@ -42,6 +88,16 @@ export default defineComponent({
 
   background-color: #f2ebea;
   background-size: 400% 400%;
+}
+
+.modal {
+  border: 2px transparent f2ebea !important;
+  border-radius: 20px !important;
+  max-width: 800px;
+}
+
+.modal-content {
+  background-color: #f2ebea;
 }
 
 .row {
