@@ -67,7 +67,7 @@ onMounted(async () => {
     </div>
     <div class="col l8 m12 s12 file-block input-field">
       <div class="row">
-        <div class="col s12 file-block-title">📃資料夾內容</div>
+        <div class="col s12 file-block-title">📂資料夾內容</div>
         <div
           class="col s12 wow animate__fadeInRightBig floatup-div file ellipsis"
           @click="goToUrl(item)"
@@ -76,10 +76,15 @@ onMounted(async () => {
           :value="item"
         >
           <a>
-            <div v-if="(item as string).endsWith('.png') || (item as string).endsWith('.jpg')">
-              🖼️{{ item as string }}
+            <div v-if="['.png', '.jpg', '.jpeg'].some((ext) => item.toLowerCase().endsWith(ext))">🖼️{{ item }}</div>
+            <div v-else-if="['.zip', '.rar', '.7z', '.tar.gz'].some((ext) => item.toLowerCase().endsWith(ext))">
+              🗃️{{ item }}
             </div>
-            <div v-else>📃{{ item as string }}</div>
+            <div v-else-if="['.go', '.py', '.fs', '.cs'].some((ext) => item.toLowerCase().endsWith(ext))">
+              💻{{ item }}
+            </div>
+            <div v-else-if="['.xp3'].some((ext) => item.toLowerCase().endsWith(ext))">⚙️{{ item }}</div>
+            <div v-else>📃{{ item }}</div>
           </a>
         </div>
       </div>
