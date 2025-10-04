@@ -38,7 +38,7 @@ const upload = async () => {
     return;
   }
 
-  if (["", ".js", ".exe", "dll", ".sh"].some((ext) => (file.value?.name ?? "").toLowerCase().endsWith(ext))) {
+  if ([".js", ".exe", ".dll", ".sh"].some((ext) => (file.value?.name ?? "").toLowerCase().endsWith(ext))) {
     alert("不允許該檔案上傳");
     return;
   }
